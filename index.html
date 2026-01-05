@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PORANT</title>
+
+  <style>
+    body{
+      margin:0;
+      min-height:100vh;
+      background-image:url("https://img.freepik.com/free-photo/artistic-blurry-colorful-wallpaper-background_58702-8211.jpg");
+      background-size:cover;
+      background-position:center;
+      background-repeat:no-repeat;
+      font-family: Arial, sans-serif;
+    }
+
+    .top-logos{
+      padding: 12px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .top-logos img{ display:block; }
+
+    .top-menu{
+      width:100%;
+      margin-top: 6px;
+      border-collapse:collapse;
+      text-align:center;
+      background:#1d3498;
+    }
+    .top-menu th{
+      padding:14px 10px;
+      color:#fff;
+      font-size:18px;
+      font-weight:700;
+      border:none;
+      cursor:pointer;
+      white-space:nowrap;
+    }
+    .top-menu th a{
+      color:#fff;
+      text-decoration:none;
+    }
+    .top-menu th:hover{ text-decoration:underline; }
+
+    .page{
+      display:flex;
+      justify-content:center;
+      padding: 28px 16px 60px;
+    }
+
+    .card{
+      width: 420px;
+      background: rgba(255,255,255,0.92);
+      border-radius: 16px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+      padding: 20px;
+      text-align:center;
+      backdrop-filter: blur(2px);
+    }
+
+    .card h2{
+      margin: 0 0 16px;
+      color:#1d3498;
+    }
+
+    .card input{
+      width: 90%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #aaa;
+      font-size: 16px;
+      margin-bottom: 12px;
+      text-align:right;
+    }
+
+    .btn{
+      background:#1d3498;
+      color:#fff;
+      border:none;
+      padding:10px 18px;
+      border-radius:8px;
+      font-size:16px;
+      cursor:pointer;
+      transition: transform .12s ease, background .12s ease;
+    }
+    .btn:hover{ background:#14256b; transform: translateY(-1px); }
+
+    .btn.secondary{
+      background: transparent;
+      color:#1d3498;
+      border: 2px solid #1d3498;
+      margin-top: 10px;
+    }
+    .btn.secondary:hover{
+      background: rgba(29,52,152,0.08);
+      transform: translateY(-1px);
+    }
+
+    .hint{
+      margin-top: 12px;
+      font-size: 13px;
+      color: rgba(1,20,30,0.75);
+      text-align:right;
+      line-height: 1.4;
+    }
+
+    .footer-bar{
+      background:#1d3498;
+      padding: 18px 0;
+      margin-top: 30px;
+    }
+    .footer-table{
+      width:100%;
+      border-collapse:collapse;
+      text-align:center;
+    }
+    .footer-table th, .footer-table td{
+      border:none;
+      padding: 8px 10px;
+      color:#fff;
+    }
+    .footer-table th{ font-size: 18px; }
+    .footer-table a{
+      color:#fff;
+      text-decoration:none;
+    }
+    .footer-table a:hover{ text-decoration:underline; }
+  </style>
+</head>
+
+<body>
+
+  <div class="top-logos">
+    <img src="https://pronatindustries.com/wp-content/uploads/2014/07/P-IND-2-e1583672765835.png"
+         alt="Logo" width="120" height="100">
+    <img src="https://pronatindustries.com/wp-content/uploads/2014/07/secondary-logo.png"
+         alt="Logo" width="700" height="30">
+  </div>
+
+  <table class="top-menu">
+    <tr>
+      <th><a href="index.html">Home Page</a></th>
+      <th><a href="#">Products</a></th>
+      <th><a href="#">Markets</a></th>
+      <th><a href="#">Material Suppliers</a></th>
+      <th><a href="#">About Us</a></th>
+      <th><a href="#">Contact Us</a></th>
+    </tr>
+  </table>
+
+  <div class="page">
+    <div class="card">
+      <h2>ניתור סטטוס הזמנה</h2>
+
+      <input
+        id="orderNumber"
+        type="text"
+        placeholder="CO/PO"
+        inputmode="numeric"
+        pattern="[0-9]*"
+        oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+      />
+
+      <button class="btn" onclick="checkStatus()">בדוק סטטוס</button>
+
+      <button class="btn secondary" onclick="goToOrders()">מעבר לרשימת הזמנות מלאה</button>
+
+      <div class="hint">
+        <b></b><br>
+      
+        אם ההזמנה עדיין לא קיימת, תוכלו ליצור אותה בעמוד ההזמנות.
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bar">
+    <table class="footer-table">
+      <tr>
+        <th>About Us</th>
+        <th>Products</th>
+        <th>Contact Us</th>
+        <th></th>
+        <th>
+          <a href="https://www.linkedin.com/company/pronat-industries-ltd./" target="_blank" rel="noopener noreferrer">
+            LinkedIn
+          </a>
+        </th>
+      </tr>
+      <tr>
+        <td></td>
+        <td>PRONAT Electronics</td>
+        <td>tel: +972-4-6286888</td>
+        <td>PRONAT Industries Ltd.</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>PRONAT Aerospace</td>
+        <td>fax: +972-4-6286890</td>
+        <td>Tzavei Hanachal St.</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>PRONAT Medical</td>
+        <td>sales@pronatindustries.com</td>
+        <td>Emek Hefer Industrial Park</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td></td>
+        <td>pronatindustries.com</td>
+        <td>3877701 Israel</td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "pronat_orders_db_v1";
+
+    function goToOrders(){
+      window.location.href = "orders.html";
+    }
+
+
+    function readDB(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(!raw) return { version: 1, orders: [] };
+        const parsed = JSON.parse(raw);
+        if(!parsed || !Array.isArray(parsed.orders)) return { version: 1, orders: [] };
+        return parsed;
+      }catch(e){
+        // אם הדפדפן חוסם localStorage (למשל בהרצה כ-file:// בחלק מהדפדפנים)
+        return { version: 1, orders: [] };
+      }
+    }
+
+    function checkStatus(){
+      const order = document.getElementById("orderNumber").value.trim();
+
+      if(!order){
+        alert("נא להכניס מספר הזמנה.");
+        return;
+      }
+      if(!/^\d+$/.test(order)){
+        alert("צריך להכניס מספר הזמנה (ספרות בלבד) ולא מילה.");
+        return;
+      }
+
+      const db = readDB();
+      const exists = db.orders.some(o => String(o.id) === String(order));
+
+      if(!exists){
+        alert("ההזמנה לא קיימת במערכת");
+        return;
+      }
+
+      window.location.href = "orders.html?order=" + encodeURIComponent(order);
+    }
+  </script>
+
+</body>
+</html>

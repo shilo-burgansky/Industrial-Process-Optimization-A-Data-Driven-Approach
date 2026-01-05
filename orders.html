@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PORANT - Orders</title>
+
+  <style>
+    body{
+      margin:0;
+      min-height:100vh;
+      background-image:url("https://img.freepik.com/free-photo/artistic-blurry-colorful-wallpaper-background_58702-8211.jpg");
+      background-size:cover;
+      background-position:center;
+      background-repeat:no-repeat;
+      font-family: Arial, sans-serif;
+    }
+
+    .top-logos{
+      padding: 12px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+    .top-logos img{ display:block; }
+
+    .top-menu{
+      width:100%;
+      margin-top: 6px;
+      border-collapse:collapse;
+      text-align:center;
+      background:#1d3498;
+    }
+    .top-menu th{
+      padding:14px 10px;
+      color:#fff;
+      font-size:18px;
+      font-weight:700;
+      border:none;
+      cursor:pointer;
+      white-space:nowrap;
+    }
+    .top-menu th a{
+      color:#fff;
+      text-decoration:none;
+    }
+    .top-menu th:hover{ text-decoration:underline; }
+
+    .page{
+      display:flex;
+      justify-content:center;
+      padding: 28px 16px 60px;
+    }
+
+    .card{
+      width: min(980px, 96vw);
+      background: rgba(255,255,255,0.92);
+      border-radius: 16px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.25);
+      padding: 20px;
+      text-align:right;
+      backdrop-filter: blur(2px);
+    }
+
+    .headerRow{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-bottom: 12px;
+    }
+    .title{
+      margin: 0;
+      color:#1d3498;
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+
+    .btn{
+      background:#1d3498;
+      color:#fff;
+      border:none;
+      padding:10px 14px;
+      border-radius:10px;
+      font-size:15px;
+      cursor:pointer;
+      transition: transform .12s ease, background .12s ease;
+    }
+    .btn:hover{ background:#14256b; transform: translateY(-1px); }
+
+    .btn.secondary{
+      background: transparent;
+      color:#1d3498;
+      border: 2px solid #1d3498;
+    }
+    .btn.secondary:hover{
+      background: rgba(29,52,152,0.08);
+      transform: translateY(-1px);
+    }
+
+    .btn.danger{
+      background:#c0392b;
+    }
+    .btn.danger:hover{ background:#a83226; }
+
+    .hint{
+      margin: 6px 0 14px;
+      font-size: 13px;
+      color: rgba(1,20,30,0.75);
+      line-height: 1.4;
+    }
+
+    .ordersTable{
+      width:100%;
+      border-collapse:collapse;
+      overflow:hidden;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.85);
+    }
+
+    .ordersTable th{
+      background:#1d3498;
+      color:#fff;
+      font-weight:800;
+      padding:12px 10px;
+      text-align:center;
+      border:none;
+    }
+    .ordersTable td{
+      padding:12px 10px;
+      text-align:center;
+      border-top: 1px solid rgba(1,20,30,0.12);
+      background: rgba(255,255,255,0.92);
+    }
+
+    .rowBtn{
+      border:none;
+      background: transparent;
+      cursor:pointer;
+      color:#1d3498;
+      font-weight: 800;
+      text-decoration: underline;
+    }
+
+    .statusPill{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius: 999px;
+      border:1px solid rgba(1,20,30,0.18);
+      background: rgba(241,243,249,0.8);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .highlight{
+      animation: flash 1.4s ease 1;
+    }
+    @keyframes flash{
+      0%{ box-shadow: inset 0 0 0 999px rgba(29,52,152,0.16); }
+      100%{ box-shadow: inset 0 0 0 999px rgba(29,52,152,0.0); }
+    }
+
+    .overlay{
+      display:none;
+      position:fixed;
+      inset:0;
+      background:rgba(0,0,0,0.60);
+      justify-content:center;
+      align-items:center;
+      padding: 16px;
+      z-index: 999;
+    }
+
+    .modal{
+      width:460px;
+      max-width: 95vw;
+      background:#fff;
+      border-radius:16px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.35);
+      padding: 18px;
+      text-align:right;
+      transform: translateY(10px) scale(0.98);
+      opacity: 0;
+      transition: transform .18s ease, opacity .18s ease;
+    }
+    .overlay.show .modal{
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+
+    .statusRow{
+      display:flex;
+      justify-content:space-between;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-bottom: 14px;
+    }
+    .badge{
+      background:#f1f3f9;
+      border:1px solid #ccc;
+      padding:6px 10px;
+      border-radius:20px;
+      font-size:14px;
+    }
+
+    .steps{
+      display:grid;
+      gap:8px;
+      margin-top: 10px;
+    }
+    .step{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:10px;
+      border-radius:12px;
+      border:1px solid rgba(1,20,30,0.18);
+      background:#fafafa;
+    }
+    .dot{
+      width:12px;
+      height:12px;
+      border-radius:50%;
+      background:#bbb;
+    }
+    .step.done .dot{ background:#1d3498; }
+    .step.done .text{ font-weight:800; }
+
+    .closeBtn{
+      margin-top: 14px;
+      width:100%;
+    }
+
+    .formRow{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-top: 10px;
+    }
+    .formRow.one{ grid-template-columns: 1fr; }
+
+    .input, select{
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid rgba(1,20,30,0.25);
+      font-size: 15px;
+      outline:none;
+    }
+
+    .smallHint{
+      font-size:12px;
+      color: rgba(1,20,30,0.70);
+      margin-top: 8px;
+      line-height: 1.4;
+    }
+
+    .footer-bar{
+      background:#1d3498;
+      padding: 18px 0;
+      margin-top: 30px;
+    }
+    .footer-table{
+      width:100%;
+      border-collapse:collapse;
+      text-align:center;
+    }
+    .footer-table th, .footer-table td{
+      border:none;
+      padding: 8px 10px;
+      color:#fff;
+    }
+    .footer-table th{ font-size: 18px; }
+    .footer-table a{
+      color:#fff;
+      text-decoration:none;
+    }
+    .footer-table a:hover{ text-decoration:underline; }
+
+    @media (max-width: 720px){
+      .ordersTable th:nth-child(4),
+      .ordersTable td:nth-child(4){
+        display:none;
+      }
+      .formRow{ grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="top-logos">
+    <img src="https://pronatindustries.com/wp-content/uploads/2014/07/P-IND-2-e1583672765835.png"
+         alt="Logo" width="120" height="100">
+    <img src="https://pronatindustries.com/wp-content/uploads/2014/07/secondary-logo.png"
+         alt="Logo" width="700" height="30">
+  </div>
+
+  <table class="top-menu">
+    <tr>
+      <th><a href="index.html">Home Page</a></th>
+      <th><a href="#">Products</a></th>
+      <th><a href="#">Markets</a></th>
+      <th><a href="#">Material Suppliers</a></th>
+      <th><a href="#">About Us</a></th>
+      <th><a href="#">Contact Us</a></th>
+    </tr>
+  </table>
+
+  <div class="page">
+    <div class="card">
+
+      <div class="headerRow">
+        <h2 class="title">טבלת הזמנות</h2>
+        <div class="actions">
+          <button class="btn secondary" onclick="goBack()">חזרה לבדיקה</button>
+          <button class="btn secondary" onclick="openAddModal()">הוספת הזמנה</button>
+          <button class="btn secondary" onclick="exportJSON()">ייצוא הזמנות</button>
+          <button class="btn secondary" onclick="triggerImport()">ייבוא הזמנות</button>
+          <button class="btn danger" onclick="clearAll()">נקה הכל</button>
+        </div>
+      </div>
+
+      <div class="hint">
+      
+      </div>
+
+      <input id="importFile" type="file" accept="application/json" style="display:none" onchange="importJSON(event)" />
+
+      <table class="ordersTable" id="ordersTable">
+        <thead>
+          <tr>
+            <th>מספר הזמנה</th>
+            <th>סטטוס</th>
+            <th>שלב</th>
+            <th>עודכן לאחרונה</th>
+          </tr>
+        </thead>
+        <tbody id="ordersBody"></tbody>
+      </table>
+
+    </div>
+  </div>
+
+  <!-- View Modal -->
+  <div class="overlay" id="overlayView" onclick="overlayClick(event, 'overlayView')">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="statusRow">
+        <div class="badge" id="modalStatus">סטטוס: —</div>
+        <div class="badge" id="modalTime">עודכן לאחרונה: —</div>
+      </div>
+
+      <div class="badge" id="modalOrder" style="margin-bottom:10px;">מספר הזמנה: —</div>
+
+      <div class="steps" id="stepsBox"></div>
+
+      <div class="formRow one" style="margin-top:14px;">
+        <button class="btn secondary" onclick="openEditFromView()">עריכת סטטוס</button>
+        <button class="btn danger" onclick="deleteCurrent()">מחיקת הזמנה</button>
+      </div>
+
+      <button class="btn closeBtn danger" onclick="closeModal('overlayView')">סגור</button>
+    </div>
+  </div>
+
+  <!-- Add/Edit Modal -->
+  <div class="overlay" id="overlayEdit" onclick="overlayClick(event, 'overlayEdit')">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div class="badge" id="editTitle" style="margin-bottom:10px; font-weight:800;">הוספת הזמנה</div>
+
+      <div class="formRow">
+        <div>
+          <div style="font-size:13px; margin-bottom:6px; color:rgba(1,20,30,0.75);">מספר הזמנה</div>
+          <input class="input" id="editOrderId" placeholder="למשל 12345" inputmode="numeric"
+                 oninput="this.value = this.value.replace(/[^0-9]/g, '')" />
+        </div>
+
+        <div>
+          <div style="font-size:13px; margin-bottom:6px; color:rgba(1,20,30,0.75);">שלב</div>
+          <select id="editStep" class="input"></select>
+        </div>
+      </div>
+
+      <div class="formRow one">
+        <div>
+          <div style="font-size:13px; margin-bottom:6px; color:rgba(1,20,30,0.75);">סטטוס (אפשר להשאיר אוטומטי)</div>
+          <input class="input" id="editStatusText" placeholder="למשל בטיפול / נשלח / נמסר" />
+        </div>
+      </div>
+
+      <div class="smallHint">
+        אם שדה הסטטוס ריק, המערכת תבחר סטטוס בהתאם לשלב שבחרת.
+      </div>
+
+      <div class="formRow one" style="margin-top:14px;">
+        <button class="btn" onclick="saveOrder()">שמור</button>
+        <button class="btn secondary" onclick="closeModal('overlayEdit')">ביטול</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-bar">
+    <table class="footer-table">
+      <tr>
+        <th>About Us</th>
+        <th>Products</th>
+        <th>Contact Us</th>
+        <th></th>
+        <th>
+          <a href="https://www.linkedin.com/company/pronat-industries-ltd./" target="_blank" rel="noopener noreferrer">
+            LinkedIn
+          </a>
+        </th>
+      </tr>
+      <tr>
+        <td></td>
+        <td>PRONAT Electronics</td>
+        <td>tel: +972-4-6286888</td>
+        <td>PRONAT Industries Ltd.</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>PRONAT Aerospace</td>
+        <td>fax: +972-4-6286890</td>
+        <td>Tzavei Hanachal St.</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td>PRONAT Medical</td>
+        <td>sales@pronatindustries.com</td>
+        <td>Emek Hefer Industrial Park</td>
+        <td></td>
+      </tr>
+      <tr>
+        <td></td>
+        <td></td>
+        <td>pronatindustries.com</td>
+        <td>3877701 Israel</td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
+
+  <script>
+    // ========================
+    // Data Model + Storage
+    // ========================
+    // DB shape saved in localStorage as JSON text:
+    // { version: 1, orders: [ { id, stepIndex, statusText, createdAt, updatedAt } ] }
+    const STORAGE_KEY = "pronat_orders_db_v1";
+
+    const STEPS = [
+      "בטיפול מכירות",
+     " בטיפול תפי" ,
+      "בייצור",
+      "בבדיקה",
+      "באריזה",
+      "נשלח",
+      "התקבל"
+    ];
+
+    const DEFAULT_STATUS_BY_STEP = {
+      0: "בטיפול מכירות",
+      1: " בטיפול תפי" ,
+      2: "בייצור",
+      3: "בבדיקה",
+      4: "באריזה",
+      4: "נשלח",
+      5: "התקבל"
+    };
+
+    let currentOrderId = ""; // used by view/delete/edit
+
+    function nowFormatted(){
+      const now = new Date();
+      return now.toLocaleDateString("he-IL") + " " + now.toLocaleTimeString("he-IL");
+    }
+
+    function getQueryOrder(){
+      const params = new URLSearchParams(window.location.search);
+      const order = params.get("order");
+      return order ? order.trim() : "";
+    }
+
+    function readDB(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(!raw) return { version: 1, orders: [] };
+        const parsed = JSON.parse(raw);
+        if(!parsed || !Array.isArray(parsed.orders)) return { version: 1, orders: [] };
+        return parsed;
+      }catch(e){
+        return { version: 1, orders: [] };
+      }
+    }
+
+    function writeDB(db){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+    }
+
+    function upsertOrder(order){
+      const db = readDB();
+      const idx = db.orders.findIndex(o => o.id === order.id);
+      if(idx >= 0) db.orders[idx] = order;
+      else db.orders.unshift(order);
+      writeDB(db);
+    }
+
+    function deleteOrder(id){
+      const db = readDB();
+      db.orders = db.orders.filter(o => o.id !== id);
+      writeDB(db);
+    }
+
+    // ========================
+    // UI: Table
+    // ========================
+    function renderTable(selectedOrder = ""){
+      const body = document.getElementById("ordersBody");
+      const db = readDB();
+      const orders = db.orders;
+
+      body.innerHTML = "";
+
+      if(orders.length === 0){
+        const tr = document.createElement("tr");
+        tr.innerHTML = `<td colspan="4" style="padding:16px; color: rgba(1,20,30,0.70);">
+          אין הזמנות בטבלה עדיין. אפשר להוסיף הזמנה עם "הוספת הזמנה".
+        </td>`;
+        body.appendChild(tr);
+        return;
+      }
+
+      for(const item of orders){
+        const tr = document.createElement("tr");
+        if(item.id === selectedOrder) tr.classList.add("highlight");
+
+        const stageLabel = `${(item.stepIndex ?? 0) + 1} / ${STEPS.length}`;
+
+        tr.innerHTML = `
+          <td>
+            <button class="rowBtn" onclick="openOrder('${escapeJS(item.id)}')">${item.id}</button>
+          </td>
+          <td><span class="statusPill">${escapeHTML(item.statusText || DEFAULT_STATUS_BY_STEP[item.stepIndex ?? 0] || "—")}</span></td>
+          <td>${stageLabel}</td>
+          <td>${escapeHTML(item.updatedAt || "—")}</td>
+        `;
+        body.appendChild(tr);
+      }
+    }
+
+    // ========================
+    // UI: View Modal
+    // ========================
+    function openOrder(orderId){
+      if(!/^\d+$/.test(orderId)){
+        alert("מספר הזמנה חייב להיות מספר (ספרות בלבד).");
+        return;
+      }
+
+      const db = readDB();
+      const item = db.orders.find(o => o.id === orderId);
+
+      if(!item){
+        alert("ההזמנה לא קיימת במערכת");
+        // חזרה לעמוד הראשי במקום "קריסה" או ניסיון לפתוח מודאל על הזמנה לא קיימת
+        window.location.href = "index.html";
+        return;
+      }
+
+      currentOrderId = orderId;
+
+      const updatedAt = item.updatedAt || "—";
+      const statusText = item.statusText || DEFAULT_STATUS_BY_STEP[item.stepIndex ?? 0] || "—";
+
+      document.getElementById("modalOrder").innerText  = "מספר הזמנה: " + orderId;
+      document.getElementById("modalStatus").innerText = "סטטוס: " + statusText;
+      document.getElementById("modalTime").innerText   = "עודכן לאחרונה: " + updatedAt;
+
+      // steps
+      const stepsBox = document.getElementById("stepsBox");
+      stepsBox.innerHTML = "";
+      const stepIndex = Number.isFinite(item.stepIndex) ? item.stepIndex : 0;
+      for(let i = 0; i < STEPS.length; i++){
+        const div = document.createElement("div");
+        div.className = "step" + (i <= stepIndex ? " done" : "");
+        div.innerHTML = `<div class="dot"></div><div class="text">${escapeHTML(STEPS[i])}</div>`;
+        stepsBox.appendChild(div);
+      }
+
+      showModal("overlayView");
+      renderTable(orderId);
+    }
+
+    function openEditFromView(){
+      closeModal("overlayView");
+      openAddModal(currentOrderId, /*isEdit*/ true);
+    }
+
+    function deleteCurrent(){
+      if(!currentOrderId) return;
+      const ok = confirm("למחוק את ההזמנה " + currentOrderId + " ?");
+      if(!ok) return;
+      deleteOrder(currentOrderId);
+      currentOrderId = "";
+      closeModal("overlayView");
+      renderTable();
+    }
+
+    // ========================
+    // UI: Add/Edit Modal
+    // ========================
+    function fillStepOptions(){
+      const sel = document.getElementById("editStep");
+      sel.innerHTML = "";
+      for(let i = 0; i < STEPS.length; i++){
+        const opt = document.createElement("option");
+        opt.value = String(i);
+        opt.textContent = `${i+1}. ${STEPS[i]}`;
+        sel.appendChild(opt);
+      }
+    }
+
+    function openAddModal(prefillId = "", isEdit = false){
+      fillStepOptions();
+
+      const db = readDB();
+      const existing = prefillId ? db.orders.find(o => o.id === prefillId) : null;
+
+      document.getElementById("editTitle").innerText = isEdit ? "עריכת הזמנה" : "הוספת הזמנה";
+      document.getElementById("editOrderId").value = prefillId || "";
+      document.getElementById("editOrderId").disabled = !!(isEdit && prefillId);
+
+      if(existing){
+        document.getElementById("editStep").value = String(existing.stepIndex ?? 0);
+        document.getElementById("editStatusText").value = existing.statusText || "";
+      }else{
+        document.getElementById("editStep").value = "0";
+        document.getElementById("editStatusText").value = "";
+      }
+
+      showModal("overlayEdit");
+    }
+
+    function saveOrder(){
+      const id = document.getElementById("editOrderId").value.trim();
+      const stepIndex = parseInt(document.getElementById("editStep").value, 10);
+      const statusTextRaw = document.getElementById("editStatusText").value.trim();
+      const statusText = statusTextRaw || (DEFAULT_STATUS_BY_STEP[stepIndex] || "התקבל במערכת");
+
+      if(!id){
+        alert("נא להכניס מספר הזמנה.");
+        return;
+      }
+      if(!/^\d+$/.test(id)){
+        alert("מספר הזמנה חייב להיות מספר (ספרות בלבד).");
+        return;
+      }
+      if(!(stepIndex >= 0 && stepIndex < STEPS.length)){
+        alert("שלב לא תקין.");
+        return;
+      }
+
+      const db = readDB();
+      const existing = db.orders.find(o => o.id === id);
+
+      const item = {
+        id,
+        stepIndex,
+        statusText,
+        createdAt: existing?.createdAt || nowFormatted(),
+        updatedAt: nowFormatted()
+      };
+
+      upsertOrder(item);
+      closeModal("overlayEdit");
+      renderTable(id);
+
+      // if this was coming from query param, auto-open view
+      openOrder(id);
+    }
+
+    // ========================
+    // Export / Import JSON
+    // ========================
+    function exportJSON(){
+      const db = readDB();
+      const jsonStr = JSON.stringify(db, null, 2);
+      const blob = new Blob([jsonStr], { type: "application/json;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "pronat_orders.json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+
+      URL.revokeObjectURL(url);
+    }
+
+    function triggerImport(){
+      document.getElementById("importFile").click();
+    }
+
+    function importJSON(event){
+      const file = event.target.files && event.target.files[0];
+      event.target.value = ""; // allow importing same file again
+      if(!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(){
+        try{
+          const parsed = JSON.parse(String(reader.result || ""));
+          if(!parsed || !Array.isArray(parsed.orders)){
+            alert("קובץ JSON לא בפורמט הנכון.");
+            return;
+          }
+
+          // basic sanitization
+          const cleaned = {
+            version: 1,
+            orders: parsed.orders
+              .filter(o => o && typeof o.id === "string" && /^\d+$/.test(o.id))
+              .map(o => ({
+                id: o.id,
+                stepIndex: (Number.isFinite(o.stepIndex) ? o.stepIndex : 0),
+                statusText: (typeof o.statusText === "string" ? o.statusText : ""),
+                createdAt: (typeof o.createdAt === "string" ? o.createdAt : nowFormatted()),
+                updatedAt: (typeof o.updatedAt === "string" ? o.updatedAt : nowFormatted()),
+              }))
+          };
+
+          writeDB(cleaned);
+          renderTable();
+          alert("ייבוא הצליח.");
+        }catch(e){
+          alert("לא ניתן לקרוא את הקובץ. ודאו שזה JSON תקין.");
+        }
+      };
+      reader.readAsText(file, "utf-8");
+    }
+
+    // ========================
+    // Modal helpers
+    // ========================
+    function showModal(id){
+      const overlay = document.getElementById(id);
+      overlay.style.display = "flex";
+      requestAnimationFrame(() => overlay.classList.add("show"));
+    }
+
+    function closeModal(id){
+      const overlay = document.getElementById(id);
+      overlay.classList.remove("show");
+      setTimeout(() => { overlay.style.display = "none"; }, 180);
+    }
+
+    function overlayClick(e, id){
+      if(e.target.id === id) closeModal(id);
+    }
+
+    // ========================
+    // Utility
+    // ========================
+    function clearAll(){
+      const ok = confirm("לנקות את כל ההזמנות מהדפדפן? (לא ניתן לשחזר ללא ייבוא)");
+      if(!ok) return;
+      localStorage.removeItem(STORAGE_KEY);
+      currentOrderId = "";
+      renderTable();
+      closeModal("overlayView");
+      closeModal("overlayEdit");
+    }
+
+    function goBack(){
+      window.location.href = "index.html";
+    }
+
+    function escapeHTML(str){
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    function escapeJS(str){
+      // safe for putting inside single quotes in onclick
+      return String(str).replaceAll("\\","\\\\").replaceAll("'","\\'");
+    }
+
+    // ========================
+    // init
+    // ========================
+    (function init(){
+      const orderFromQuery = getQueryOrder();
+
+      renderTable(orderFromQuery);
+
+      // If user arrived with ?order=..., try to open it; if it doesn't exist we offer to create.
+      if(orderFromQuery){
+        // slight delay so table paints first
+        setTimeout(() => openOrder(orderFromQuery), 0);
+      }
+    })();
+  </script>
+
+</body>
+</html>
